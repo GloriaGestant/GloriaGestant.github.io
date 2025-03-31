@@ -130,7 +130,7 @@
             display: block;
         }
         
-        /* НОВОЕ: Мобильное меню */
+        /* Мобильное меню */
         .mobile-menu-toggle {
             display: none;
             background: none;
@@ -142,7 +142,12 @@
             position: absolute;
             top: 10px;
             right: 20px;
-            z-index: 101;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu-toggle:hover {
+            transform: scale(1.1);
         }
         
         nav {
@@ -704,6 +709,44 @@
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
         
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .character-card, .section {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .character-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        
+        .character-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        
+        .character-card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        
+        /* Специальный блок истории Freddy's */
+        .freddy-story {
+            background: linear-gradient(135deg, rgba(94,53,177,0.1), rgba(149,117,205,0.1));
+            padding: 25px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 4px solid var(--william);
+            transition: all 0.3s;
+        }
+        
+        .freddy-story:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(94,53,177,0.1);
+        }
+    
+        /* Мобильные стили */
         @media (max-width: 768px) {
             h1 {
                 font-size: 2.5rem;
@@ -713,7 +756,7 @@
                 font-size: 2rem;
             }
             
-            /* НОВОЕ: Стили для мобильного меню */
+            /* Мобильное меню */
             .mobile-menu-toggle {
                 display: block;
             }
@@ -735,15 +778,17 @@
                 flex-direction: column;
                 align-items: center;
                 gap: 0;
-                padding: 20px 0;
+                padding: 0;
                 max-height: 0;
                 overflow: hidden;
                 transition: max-height 0.3s ease, padding 0.3s ease;
                 box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+                margin: 0;
+                z-index: 1000;
             }
             
             nav ul.active {
-                max-height: 500px;
+                max-height: 100vh;
                 padding: 20px 0;
             }
             
@@ -793,43 +838,6 @@
             .race-grid, .relationships-grid {
                 grid-template-columns: 1fr;
             }
-        }
-        
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .character-card, .section {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-        
-        .character-card:nth-child(2) {
-            animation-delay: 0.1s;
-        }
-        
-        .character-card:nth-child(3) {
-            animation-delay: 0.2s;
-        }
-        
-        .character-card:nth-child(4) {
-            animation-delay: 0.3s;
-        }
-        
-        /* Специальный блок истории Freddy's */
-        .freddy-story {
-            background: linear-gradient(135deg, rgba(94,53,177,0.1), rgba(149,117,205,0.1));
-            padding: 25px;
-            border-radius: 10px;
-            margin: 30px 0;
-            border-left: 4px solid var(--william);
-            transition: all 0.3s;
-        }
-        
-        .freddy-story:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(94,53,177,0.1);
         }
     </style>
 </head>
@@ -1373,7 +1381,7 @@
         });
         
         // Плавный скролл для якорных ссылок
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 
@@ -1408,23 +1416,33 @@
             });
         });
         
-        // НОВОЕ: Мобильное меню
+        // Исправленное мобильное меню
         const mobileMenuToggle = document.getElementById('mobileMenuToggle');
         const mainMenu = document.getElementById('mainMenu');
         
-        mobileMenuToggle.addEventListener('click', () => {
-            mainMenu.classList.toggle('active');
+        mobileMenuToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isActive = mainMenu.classList.toggle('active');
             
-            if (mainMenu.classList.contains('active')) {
-                mobileMenuToggle.innerHTML = '<i class="fas fa-times"></i>';
-            } else {
-                mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            }
+            // Плавное переключение иконки
+            setTimeout(() => {
+                mobileMenuToggle.innerHTML = isActive 
+                    ? '<i class="fas fa-times"></i>' 
+                    : '<i class="fas fa-bars"></i>';
+            }, 100);
         });
         
         // Закрытие меню при клике вне его области
         document.addEventListener('click', (e) => {
-            if (!mainMenu.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+            if (!mainMenu.contains(e.target) && e.target !== mobileMenuToggle) {
+                mainMenu.classList.remove('active');
+                mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+        
+        // Закрытие меню при изменении размера окна (на случай поворота устройства)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
                 mainMenu.classList.remove('active');
                 mobileMenuToggle.innerHTML = '<i class="fas fa-bars"></i>';
             }
