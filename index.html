@@ -844,97 +844,119 @@
     </style>
     <!--CSS для галереи-->
     <style>
+        /* Галерея */
         .gallery-container {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
-            padding: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f9f0ff 0%, #e6e6fa 100%);
+            border-radius: 16px;
+            margin: 15px;
+            box-shadow: 0 8px 32px rgba(123, 31, 162, 0.1);
         }
         
         .character {
             position: relative;
             cursor: pointer;
             text-align: center;
-            margin-bottom: 15px;
-            width: 160px;
+            margin-bottom: 20px;
+            width: 180px;
             outline: none;
+            transition: all 0.3s ease;
         }
         
         .character:focus-visible {
-            outline: 2px solid #7E57C2;
-            border-radius: 10px;
+            outline: 3px solid #9c64ff;
+            border-radius: 12px;
         }
         
         .character img {
             width: 100%;
-            height: 160px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
+            height: 180px;
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             object-fit: cover;
             object-position: top center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.3);
             aspect-ratio: 1/1;
+            filter: brightness(0.98);
         }
         
         .character-tooltip {
             display: block;
-            margin-top: 10px;
-            color: var(--text-light);
-            font-weight: 500;
-            font-size: 0.95em;
+            margin-top: 12px;
+            color: #5a2d82;
+            font-weight: 600;
+            font-size: 1em;
             transition: all 0.2s ease;
-            padding: 0 5px;
+            padding: 6px 8px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            backdrop-filter: blur(4px);
         }
         
         .character:hover img,
         .character:focus img {
-            transform: scale(1.05);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.08);
+            box-shadow: 0 8px 24px rgba(156, 39, 176, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            filter: brightness(1.05);
         }
     
-        /* Модальное окно в полноэкранном режиме */
+        .character:hover .character-tooltip {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-2px);
+        }
+    
+        /* Модальное окно - гарантированно поверх всех элементов */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 9999;
             left: 0;
             top: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0, 0, 0, 0.95);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(90, 45, 130, 0.95) 0%, rgba(60, 20, 90, 0.98) 100%);
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow: auto;
             opacity: 0;
-            transition: opacity 0.3s ease-out;
+            transition: opacity 0.4s ease-out;
+            isolation: isolate;
         }
         
         .modal.modal-open {
+            display: flex;
             opacity: 1;
         }
     
         .modal-content {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 0;
+            padding: 30px;
             box-sizing: border-box;
+            position: relative;
         }
     
         #enlargedImage {
-            max-width: 100vw;
-            max-height: 100vh;
+            max-width: 90vw;
+            max-height: 85vh;
             object-fit: contain;
-            transform: scale(0.9);
+            transform: scale(0.85);
             opacity: 0;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+            border-radius: 12px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.15);
         }
         
         .modal-open #enlargedImage {
@@ -943,22 +965,27 @@
         }
     
         #caption {
-            position: fixed;
-            bottom: 30px;
+            position: absolute;
+            bottom: 40px;
             left: 0;
             right: 0;
             margin: 0 auto;
             text-align: center;
             color: white;
-            font-size: 24px;
-            padding: 12px 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            max-width: 90%;
+            font-size: 26px;
+            padding: 16px 24px;
+            background: linear-gradient(to right, rgba(156, 39, 176, 0.8), rgba(103, 58, 183, 0.9));
+            border-radius: 12px;
+            max-width: 80%;
             word-break: break-word;
-            transform: translateY(30px);
+            transform: translateY(40px);
             opacity: 0;
-            transition: all 0.5s ease-out 0.2s;
+            transition: all 0.6s ease-out 0.2s;
+            z-index: 10001;
+            backdrop-filter: blur(6px);
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .modal-open #caption {
@@ -967,26 +994,28 @@
         }
     
         .close-modal {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+            position: absolute;
+            top: 30px;
+            right: 30px;
             color: white;
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 300;
             cursor: pointer;
-            z-index: 1001;
-            transition: all 0.2s ease;
-            background: rgba(0, 0, 0, 0.5);
+            z-index: 10002;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.8), rgba(103, 58, 183, 0.9));
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 56px;
+            height: 56px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease-out 0.1s;
+            transform: translateY(-15px);
+            transition: all 0.4s ease-out 0.15s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .modal-open .close-modal {
@@ -996,45 +1025,113 @@
     
         .close-modal:hover,
         .close-modal:focus {
-            transform: scale(1.2) !important;
-            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.15) !important;
+            background: linear-gradient(135deg, rgba(176, 59, 196, 0.9), rgba(123, 31, 162, 0.95));
             color: white;
             outline: none;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Блокировка прокрутки при открытом модальном окне */
+        body.modal-open {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
         }
         
         /* Адаптация для разных размеров экранов */
-        @media (max-width: 768px) {
+        @media (max-width: 768px), (max-height: 768px) {
+            .gallery-container {
+                gap: 20px;
+                padding: 15px;
+            }
+            
             .character {
-                width: 140px;
+                width: 150px;
+                margin-bottom: 15px;
             }
             
             .character img {
-                height: 140px;
+                height: 150px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            #enlargedImage {
+                max-width: 95vw;
+                max-height: 90vh;
             }
             
             #caption {
-                font-size: 20px;
+                font-size: 22px;
+                bottom: 30px;
+                padding: 14px 20px;
+                max-width: 85%;
+            }
+            
+            .close-modal {
+                top: 20px;
+                right: 20px;
+                font-size: 38px;
+                width: 50px;
+                height: 50px;
+            }
+        }
+        
+        @media (max-width: 480px), (max-height: 480px) {
+            .gallery-container {
+                gap: 15px;
+                padding: 12px;
+                margin: 10px;
+            }
+            
+            .character {
+                width: 130px;
+            }
+            
+            .character img {
+                height: 130px;
+            }
+            
+            .character-tooltip {
+                font-size: 0.9em;
+                padding: 5px 6px;
+            }
+            
+            #caption {
+                font-size: 18px;
                 bottom: 20px;
-                padding: 10px 15px;
+                padding: 12px 16px;
             }
             
             .close-modal {
                 top: 15px;
                 right: 15px;
-                font-size: 35px;
+                font-size: 32px;
+                width: 44px;
+                height: 44px;
+            }
+        }
+        
+        @media (max-height: 400px) {
+            #caption {
+                font-size: 16px;
+                bottom: 15px;
+                padding: 10px 14px;
+            }
+            
+            .close-modal {
+                top: 10px;
+                right: 10px;
+                font-size: 28px;
                 width: 40px;
                 height: 40px;
             }
         }
-        
-        @media (max-width: 480px) {
-            #caption {
-                font-size: 18px;
-                bottom: 15px;
-                padding: 8px 12px;
-            }
-        }
     </style>
+    
     
 </head>
 <body>
@@ -1432,10 +1529,10 @@
             </div>
         </div>
         </section>
-        <!-- Секция с галереей -->
+        <!-- Секция галереи (теперь без модального окна внутри) -->
         <section id="gallery" class="section">
             <p class="gallery-intro">Кликните на персонажа, чтобы увидеть его в полный рост и узнать детали</p>
-        
+
             <div class="gallery-container">
                 <div class="character" tabindex="0">
                     <img src="your_moaya_image.png" 
@@ -1465,15 +1562,16 @@
                     <span class="character-tooltip">Аластор Акумар</span>
                 </div>
             </div>
-        
-            <div id="enlargedImageModal" class="modal">
-                <span class="close-modal" tabindex="0" aria-label="Закрыть модальное окно">&times;</span>
-                <div class="modal-content">
-                    <img id="enlargedImage" src="" alt="">
-                    <div id="caption"></div>
-                </div>
-            </div>
         </section>
+
+        <!-- Модальное окно теперь вне секций, прямо перед закрывающим тегом body -->
+        <div id="enlargedImageModal" class="modal">
+            <span class="close-modal" tabindex="0" aria-label="Закрыть модальное окно">&times;</span>
+            <div class="modal-content">
+                <img id="enlargedImage" src="" alt="">
+                <div id="caption"></div>
+            </div>
+        </div>
         
         <section id="about" class="section">
             <h2>О вселенной персонажей</h2>
@@ -1605,7 +1703,6 @@
             const enlargedImage = document.getElementById("enlargedImage");
             const captionText = document.getElementById("caption");
             const closeBtn = document.querySelector(".close-modal");
-            const modalContent = document.querySelector(".modal-content");
             
             let scrollPosition = 0;
             let isModalOpen = false;
@@ -1623,77 +1720,71 @@
                 const characterTooltip = event.target.closest('.character')?.querySelector('.character-tooltip');
                 captionText.textContent = characterTooltip ? characterTooltip.textContent : event.target.alt;
                 
+                // Показываем модальное окно
                 modal.style.display = "flex";
                 
-                // Для всех устройств - полноэкранный режим
-                if (document.documentElement.requestFullscreen) {
-                    document.documentElement.requestFullscreen().catch(e => console.log(e));
-                }
-                
-                document.body.style.overflow = "hidden";
-                document.body.style.position = "fixed";
+                // Блокируем прокрутку страницы
+                document.body.classList.add('body-modal-open');
                 document.body.style.top = `-${scrollPosition}px`;
-                document.body.style.width = "100%";
                 
-                modal.classList.add('modal-open');
+                // Запускаем анимацию
+                setTimeout(() => {
+                    modal.classList.add('modal-open');
+                }, 10);
             }
     
             function closeModal() {
                 if (!isModalOpen) return;
                 isModalOpen = false;
                 
-                // Выходим из полноэкранного режима
-                if (document.fullscreenElement) {
-                    document.exitFullscreen().catch(e => console.log(e));
-                }
-                
+                // Запускаем анимацию закрытия
                 modal.classList.remove('modal-open');
-                modal.style.display = "none";
                 
-                document.body.style.overflow = "";
-                document.body.style.position = "";
-                document.body.style.top = "";
-                document.body.style.width = "";
-                
-                window.scrollTo(0, scrollPosition);
+                setTimeout(() => {
+                    // Скрываем модальное окно
+                    modal.style.display = "none";
+                    
+                    // Восстанавливаем прокрутку страницы
+                    document.body.classList.remove('body-modal-open');
+                    const scrollY = Math.abs(parseInt(document.body.style.top || '0'));
+                    document.body.style.top = '';
+                    window.scrollTo(0, scrollY);
+                }, 300);
             }
     
+            // Обработчики событий
             images.forEach(img => {
                 img.addEventListener("click", openModal);
-                img.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter") openModal(e);
-                });
+                img.addEventListener("keydown", (e) => e.key === "Enter" && openModal(e));
             });
             
-            if (closeBtn) {
-                closeBtn.addEventListener("click", closeModal);
-                closeBtn.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter") closeModal();
-                });
+            closeBtn.addEventListener("click", closeModal);
+            closeBtn.addEventListener("keydown", (e) => e.key === "Enter" && closeModal());
+            
+            modal.addEventListener("click", (e) => e.target === modal && closeModal());
+            document.addEventListener("keydown", (e) => e.key === "Escape" && isModalOpen && closeModal());
+            
+            // Предотвращаем всплытие событий
+            [enlargedImage, captionText, closeBtn].forEach(el => el.addEventListener('click', e => e.stopPropagation()));
+            
+            // Адаптация изображения при изменении размера окна
+            window.addEventListener('resize', () => isModalOpen && adjustImageSize());
+            
+            function adjustImageSize() {
+                const img = enlargedImage;
+                const windowRatio = window.innerWidth / window.innerHeight;
+                const imgRatio = img.naturalWidth / img.naturalHeight;
+                
+                if (window.innerWidth <= 768 || window.innerHeight <= 768) {
+                    img.style.maxWidth = '100vw';
+                    img.style.maxHeight = '100vh';
+                } else {
+                    img.style.maxWidth = '95vw';
+                    img.style.maxHeight = '90vh';
+                }
             }
             
-            modal.addEventListener("click", function(event) {
-                if (event.target === modal || event.target === modalContent) {
-                    closeModal();
-                }
-            });
-    
-            document.addEventListener("keydown", function(event) {
-                if (event.key === "Escape" && isModalOpen) {
-                    closeModal();
-                }
-            });
-            
-            // Обработка выхода из полноэкранного режима
-            document.addEventListener('fullscreenchange', function() {
-                if (!document.fullscreenElement && isModalOpen) {
-                    closeModal();
-                }
-            });
-            
-            [enlargedImage, captionText, closeBtn].forEach(el => {
-                if (el) el.addEventListener('click', e => e.stopPropagation());
-            });
+            enlargedImage.addEventListener('load', adjustImageSize);
         });
     </script>
     
