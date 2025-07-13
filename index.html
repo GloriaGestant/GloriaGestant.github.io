@@ -1028,28 +1028,24 @@
         }
     
         .close-modal {
-            position: absolute;
-            top: 30px;
+            position: fixed;
+            top: 80px; /* Изменили с 30px на 80px */
             right: 30px;
-            color: white;
-            font-size: 42px;
-            font-weight: 300;
-            cursor: pointer;
-            z-index: 10002;
-            transition: all 0.3s ease;
-            background: linear-gradient(135deg, rgba(156, 39, 176, 0.8), rgba(103, 58, 183, 0.9));
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
             border-radius: 50%;
-            width: 56px;
-            height: 56px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
+            z-index: 10001;
+            transition: all 0.3s ease;
             opacity: 0;
-            transform: translateY(-15px);
-            transition: all 0.4s ease-out 0.15s;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(-20px);
         }
         
         .modal-open .close-modal {
@@ -1106,11 +1102,11 @@
             }
             
             .close-modal {
-                top: 20px;
-                right: 20px;
-                font-size: 38px;
-                width: 50px;
-                height: 50px;
+                top: 60px; /* Изменили с 15px на 60px */
+                right: 15px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
             }
         }
         
@@ -1588,6 +1584,7 @@
         </section>
         
         <!-- Секция галереи -->
+        <!-- Секция галереи -->
         <section id="gallery" class="section">
             <h2>Галерея персонажей</h2>
             <p style="margin-bottom: 20px; color: var(--text-light);">Кликните на персонажа, чтобы увидеть его в полный рост и узнать детали</p>
@@ -1625,7 +1622,9 @@
 
         <!-- Модальное окно -->
         <div id="enlargedImageModal" class="modal">
-            <span class="close-modal" tabindex="0" aria-label="Закрыть модальное окно">&times;</span>
+            <button class="close-modal" tabindex="0" aria-label="Закрыть модальное окно">
+                <i class="fas fa-times"></i>
+            </button>
             <div class="modal-content">
                 <img id="enlargedImage" src="" alt="">
                 <div id="caption"></div>
@@ -1766,7 +1765,7 @@
             
             let scrollPosition = 0;
             let isModalOpen = false;
-    
+
             function openModal(event) {
                 if (isModalOpen) return;
                 isModalOpen = true;
@@ -1782,9 +1781,8 @@
                 
                 // Показываем модальное окно
                 modal.style.display = "flex";
-                
-                // Блокируем прокрутку страницы
-                document.body.classList.add('body-modal-open');
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
                 document.body.style.top = `-${scrollPosition}px`;
                 
                 // Запускаем анимацию
@@ -1792,7 +1790,7 @@
                     modal.classList.add('modal-open');
                 }, 10);
             }
-    
+
             function closeModal() {
                 if (!isModalOpen) return;
                 isModalOpen = false;
@@ -1805,13 +1803,12 @@
                     modal.style.display = "none";
                     
                     // Восстанавливаем прокрутку страницы
-                    document.body.classList.remove('body-modal-open');
-                    const scrollY = Math.abs(parseInt(document.body.style.top || '0'));
-                    document.body.style.top = '';
-                    window.scrollTo(0, scrollY);
+                    document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    window.scrollTo(0, scrollPosition);
                 }, 300);
             }
-    
+
             // Обработчики событий
             images.forEach(img => {
                 img.addEventListener("click", openModal);
@@ -1826,25 +1823,6 @@
             
             // Предотвращаем всплытие событий
             [enlargedImage, captionText, closeBtn].forEach(el => el.addEventListener('click', e => e.stopPropagation()));
-            
-            // Адаптация изображения при изменении размера окна
-            window.addEventListener('resize', () => isModalOpen && adjustImageSize());
-            
-            function adjustImageSize() {
-                const img = enlargedImage;
-                const windowRatio = window.innerWidth / window.innerHeight;
-                const imgRatio = img.naturalWidth / img.naturalHeight;
-                
-                if (window.innerWidth <= 768 || window.innerHeight <= 768) {
-                    img.style.maxWidth = '100vw';
-                    img.style.maxHeight = '100vh';
-                } else {
-                    img.style.maxWidth = '95vw';
-                    img.style.maxHeight = '90vh';
-                }
-            }
-            
-            enlargedImage.addEventListener('load', adjustImageSize);
         });
     </script>
     
